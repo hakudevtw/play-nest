@@ -1,22 +1,29 @@
 import { Controller, Get, Post, Param, Body } from '@nestjs/common';
+import { MessagesService } from './messages.service';
 import { CreateMessageDto } from './dtos/create-message.dto';
 
 // messages/* is the root path for all routes in this controller
 @Controller('messages')
 export class MessagesController {
+  messagesService: MessagesService;
+  constructor() {
+    // Don't do this in a real application! Use dependency injection instead.
+    // Services should not create instances of other services or repositories.
+    this.messagesService = new MessagesService();
+  }
+
   @Get()
   getMessages() {
-    return 'All messages';
+    return this.messagesService.findAll();
   }
 
   @Get(':id')
   getMessage(@Param('id') id: string) {
-    console.log(id);
-    return `Message with id ${id}`;
+    return this.messagesService.findOne(id);
   }
 
   @Post()
   createMessage(@Body() body: CreateMessageDto) {
-    return `Message added with content: ${body.content}`;
+    return this.messagesService.create(body.content);
   }
 }
