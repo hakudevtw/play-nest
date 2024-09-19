@@ -105,3 +105,9 @@
 - repositories - place to put storage related logic
   - usually TypeORM entity, Mongoose schema or something similar
 - having same method names in both services and repositories is common
+
+## Error Handling
+- Nest catches the error and retrieves information and response to user
+  - basically status code and messages
+- Nest provides predefined exceptions to throw (following http standards)
+  - Ex. `NotFoundException`
