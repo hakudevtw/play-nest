@@ -36,11 +36,22 @@
     ```typescript
     function bootstrap() {}
     ```
-  - `[class name].controller.ts`
+  - `[controller-name].controller.ts`
     ```typescript
     class AppController {}
     ```
-  - `[class name].module.ts`
+  - `[module-name].module.ts`
     ```typescript
     class AppModule {}
     ```
+
+### Nest CLI
+
+- Generator
+  - Module - `nest generate module [module-name]`
+    - Ex. module-name = messages
+      - Creates `messages.module.ts` in `src/messages` folder
+  - Controller - `nest generate controller [module-name]/[controller-name] --flat` 
+    - `flat` - don't create extra controllers folder
+    - Ex. module-name = messages & controller-name = messages
+      - Creates `messages.controller.ts` in `src/messages` folder
