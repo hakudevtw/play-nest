@@ -12,12 +12,7 @@ import { CreateMessageDto } from './dtos/create-message.dto';
 // messages/* is the root path for all routes in this controller
 @Controller('messages')
 export class MessagesController {
-  messagesService: MessagesService;
-  constructor() {
-    // Don't do this in a real application! Use dependency injection instead.
-    // Services should not create instances of other services or repositories.
-    this.messagesService = new MessagesService();
-  }
+  constructor(private messagesService: MessagesService) {}
 
   @Get()
   getMessages() {

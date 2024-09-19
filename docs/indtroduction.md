@@ -51,17 +51,18 @@
   - Module - `nest generate module [module-name]`
     - Ex. module-name = messages
       - Creates `messages.module.ts` in `src/messages` folder
-  - Controller - `nest generate controller [module-name]/[controller-name] --flat` 
+  - Controller - `nest generate controller [module-name]/[controller-name] --flat`
     - `flat` - don't create extra controllers folder
     - Ex. module-name = messages & controller-name = messages
       - Creates `messages.controller.ts` in `src/messages` folder
 
 ## Pipe
+
 - used to validate data from incoming requests, reject if is invalid
 - usually extended from built in `ValidationPipe` (can also build your own)
 - Setup automatic validation
   1. Tell Nest to use global validation
-    `app.useGlobalPipes(new ValidationPipe());`
+     `app.useGlobalPipes(new ValidationPipe());`
   2. Create a class to describe properties the request body should have (dto)
   3. Add validation rules to the class
   4. Apply class to request handler
@@ -88,7 +89,8 @@
     - `emitDecoratorMetadata` - causing little amount of Type information transformed into JavaScript
       ```javascript
       // Transformed JavaScript Code
-      __decorate([
+      __decorate(
+        [
           // Post decorator -> createMessage method
           (0, common_1.Post)(),
           // Body decorator -> first argument of createMessage method
@@ -96,10 +98,16 @@
           // Leaked type information to JavaScript below (metadata)
           __metadata("design:type", Function),
           __metadata("design:paramtypes", [create_message_dto_1.CreateMessageDto]),
-          __metadata("design:returntype", void 0)
-      ], MessagesController.prototype, "createMessage", null);
+          __metadata("design:returntype", void 0),
+        ],
+        MessagesController.prototype,
+        "createMessage",
+        null
+      );
       ```
+
 ## Services & Repositories
+
 - services - place to put business logic
   - uses one or more repositories to find or store data
 - repositories - place to put storage related logic
@@ -107,7 +115,117 @@
 - having same method names in both services and repositories is common
 
 ## Error Handling
+
 - Nest catches the error and retrieves information and response to user
   - basically status code and messages
 - Nest provides predefined exceptions to throw (following http standards)
   - Ex. `NotFoundException`
+
+## Dependency Injections
+
+- refreshment (dependencies)
+  - `MessagesService` needs `MessageRepository` in able to work correctly
+  - `MessagesController` needs `MessagesService` in able to work correctly
+
+### Inversion of Control Principle
+
+- Classes should not create instances of its dependencies on its own
+  - Bad Example
+    ```typescript
+    export class MessagesController {
+      messagesService: MessagesService;
+      constructor() {
+        // Don't do this in a real application! Use dependency injection instead.
+        // Controllers should not create instances of other services or repositories.
+        this.messagesService = new MessagesService();
+      }
+    }
+    ```
+  - Better: Receives dependency as constructor arguments
+    > Still relies on specifically `MessagesService` being passed in
+    ```typescript
+    export class MessagesController {
+      messagesService: MessagesService;
+      constructor(service: MessagesService) {
+        this.messagesService = service;
+      }
+    }
+    ```
+- Best Solution - receives dependency, but doesn't specifically require `MessagesService`
+
+  - Sample
+
+    ```typescript
+    // Just Define the interface that is needed
+    // Any instance or object that satisfies this interface is ok
+    interface Repository {
+      findOne(id: string);
+      findAll();
+      create(content: string);
+    }
+
+    export class MessagesController {
+      messagesService: Repository;
+      constructor(service: Repository) {
+        this.messagesService = service;
+      }
+    }
+    ```
+
+- Why this is good ? (Ex. MessagesRepository)
+  - Able to use different instance as long as it satisfies the interface
+  - Easy to swap between using different instances
+    - Ex. In production - write to hard disk (MessagesRepository)
+    - Ex. In automated test - run in memory or others faster (FakeMessagesRepository)
+- Downside
+  - Needs more code
+  - Ex. Creating a controller without Inversion Control
+    ```typescript
+    const controller = new MessagesController();
+    ```
+  - Ex. Creating a controller with Inversion Control
+    ```typescript
+    const repo = new MessagesRepository();
+    const service = new MessagesService(repo, ...);
+    // Other repos and services that are needed ...
+    const controller = new MessagesController(service, ...);
+    ```
+- Use Dependency Injections to solve the downsides
+
+### NestJS Dependency Injections
+
+- Using a Nest DI container or Injector (object)
+  - list of classes and their dependencies
+  - list of instances that have been created
+- DI Container Flow
+  - At app startup, register all classes with the container
+  - Container create list of classes and their dependencies to figure out what each dependency each class has
+    - Class `MessagesRepository` -> x
+      ```typescript
+      export class MessagesRepository {
+        constructor() {}
+      }
+      ```
+    - Class `MessagesService` -> Dependency `MessagesRepository`
+      ```typescript
+      export class MessagesService {
+        messagesRepository: MessagesRepository;
+        constructor(messagesRepository: MessagesRepository) {
+          this.messagesRepository = messagesRepository;
+        }
+      }
+      ```
+    - Class `MessagesController` -> Dependency `MessagesService`
+      ```typescript
+      export class MessagesController {
+        messagesService: MessagesService;
+        constructor(messagesService: MessagesService) {
+          this.messagesService = repo;
+        }
+      }
+      ```
+  - Container create list of instances with required dependencies
+    - Create `messagesRepository` instance (no dependencies)
+    - Create `messagesService` instance (using `messagesRepository`)
+    - Create and return `messagesController` instance (using `messagesService`)
+  - Container will hold onto the created dependency instances and reuse them if needed
