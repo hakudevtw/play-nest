@@ -56,8 +56,7 @@
     - Ex. module-name = messages & controller-name = messages
       - Creates `messages.controller.ts` in `src/messages` folder
 
-### Pipe
-
+## Pipe
 - used to validate data from incoming requests, reject if is invalid
 - usually extended from built in `ValidationPipe` (can also build your own)
 - Setup automatic validation
@@ -100,3 +99,9 @@
           __metadata("design:returntype", void 0)
       ], MessagesController.prototype, "createMessage", null);
       ```
+## Services & Repositories
+- services - place to put business logic
+  - uses one or more repositories to find or store data
+- repositories - place to put storage related logic
+  - usually TypeORM entity, Mongoose schema or something similar
+- having same method names in both services and repositories is common
