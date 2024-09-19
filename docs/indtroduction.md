@@ -60,3 +60,43 @@
 
 - used to validate data from incoming requests, reject if is invalid
 - usually extended from built in `ValidationPipe` (can also build your own)
+- Setup automatic validation
+  1. Tell Nest to use global validation
+    `app.useGlobalPipes(new ValidationPipe());`
+  2. Create a class to describe properties the request body should have (dto)
+  3. Add validation rules to the class
+  4. Apply class to request handler
+- dto (data transfer object)
+  - Carries data between two places
+  - usually classes that defines the properties that should be passed in
+- third party packages
+  - [class-validators](https://github.com/typestack/class-validator)
+  - [class-transformer](https://github.com/cunarist/class-transform) - transform object into class instances for type safe and other features
+- validation pipe flow
+  1. Use `class-transformer` to turn body into DTO class instances (with validations attached)
+  2. Use `class-validator` to validate the class instance
+  3. If there are errors, response immediately, otherwise pass body to the request handler
+- How validation pipe knows to create dto instance, when passed into the handler as Type ?
+  > Typescript should be removed since no engines can run TypeScript, needs to be converted to plain JavaScript, then how does the validation pipe know to run validation by the DTO type annotation?
+  ```typescript
+  @Post()
+  createMessage(@Body() body: CreateMessageDto) {
+    return `Message added with content: ${body.content}`;
+  }
+  ```
+  - mainly because the settings we opened in `tsconfig.json`
+    - `experimentalDecorators`
+    - `emitDecoratorMetadata` - causing little amount of Type information transformed into JavaScript
+      ```javascript
+      // Transformed JavaScript Code
+      __decorate([
+          // Post decorator -> createMessage method
+          (0, common_1.Post)(),
+          // Body decorator -> first argument of createMessage method
+          __param(0, (0, common_1.Body)()),
+          // Leaked type information to JavaScript below (metadata)
+          __metadata("design:type", Function),
+          __metadata("design:paramtypes", [create_message_dto_1.CreateMessageDto]),
+          __metadata("design:returntype", void 0)
+      ], MessagesController.prototype, "createMessage", null);
+      ```
