@@ -55,3 +55,8 @@
     - `flat` - don't create extra controllers folder
     - Ex. module-name = messages & controller-name = messages
       - Creates `messages.controller.ts` in `src/messages` folder
+
+### Pipe
+
+- used to validate data from incoming requests, reject if is invalid
+- usually extended from built in `ValidationPipe` (can also build your own)

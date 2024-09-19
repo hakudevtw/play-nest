@@ -1,4 +1,4 @@
-import { Controller, Get, Post } from '@nestjs/common';
+import { Controller, Get, Post, Param, Body } from '@nestjs/common';
 
 // messages/* is the root path for all routes in this controller
 @Controller('messages')
@@ -9,12 +9,13 @@ export class MessagesController {
   }
 
   @Get(':id')
-  getMessage() {
-    return 'One message';
+  getMessage(@Param('id') id: string) {
+    console.log(id);
+    return `Message with id ${id}`;
   }
 
   @Post()
-  createMessage() {
-    return 'Message added';
+  createMessage(@Body() body: any) {
+    return `Message added with content: ${body.content}`;
   }
 }
