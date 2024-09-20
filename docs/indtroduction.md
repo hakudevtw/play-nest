@@ -209,23 +209,40 @@
     - Class `MessagesService` -> Dependency `MessagesRepository`
       ```typescript
       export class MessagesService {
-        messagesRepository: MessagesRepository;
-        constructor(messagesRepository: MessagesRepository) {
-          this.messagesRepository = messagesRepository;
-        }
+        constructor(public messagesRepository: MessagesRepository) {}
       }
       ```
     - Class `MessagesController` -> Dependency `MessagesService`
       ```typescript
       export class MessagesController {
         messagesService: MessagesService;
-        constructor(messagesService: MessagesService) {
-          this.messagesService = repo;
-        }
+        constructor(public messagesService: MessagesService) {}
       }
       ```
   - Container create list of instances with required dependencies
     - Create `messagesRepository` instance (no dependencies)
     - Create `messagesService` instance (using `messagesRepository`)
     - Create and return `messagesController` instance (using `messagesService`)
-  - Container will hold onto the created dependency instances and reuse them if needed
+  - Container will hold onto the created dependency instances and reuse them when needed
+    - can be proved by sample below (using same instance)
+      ```typescript
+      export class MessagesController {
+        messagesService: MessagesService;
+        constructor(
+          public messagesService: MessagesService,
+          public messagesService2: MessagesService,
+          public messagesService3: MessagesService
+        ) {
+          console.log(messagesService === messagesService2); // true
+          console.log(messagesService === messagesService3); // true
+        }
+      }
+      ```
+    - Use work around to create a new instance every time (will teach later)
+- Nest DI is closer to the `BETTER` approach rather than the `BEST` approach
+  - Due to limitations from TypeScript making it hard to implement the `BEST` approach
+  - Dependency types reference to other class(better) instead of interface(best)
+
+### Main Benefit
+- Testing App is far more easier XD
+- If not a fan of testing, nest may not give u too much benefit
