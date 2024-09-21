@@ -250,3 +250,10 @@
 
 - Testing App is far more easier XD
 - If not a fan of testing, nest may not give u too much benefit
+
+## Exceptions
+
+- Nest is designed to handle not only HTTP protocols, also websocket or grpc
+- Usually want to throw exceptions on controllers, but there are still scenarios hard to hook in to service and get what kind of error happened
+- Throwing http specific exceptions in service won't be caught by controllers using other protocols (Ex. NotFoundException)
+- Create custom Exceptional Filters instead of the HTTP exceptional filters provided by nest
