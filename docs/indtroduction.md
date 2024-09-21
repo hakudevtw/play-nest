@@ -242,7 +242,11 @@
 - Nest DI is closer to the `BETTER` approach rather than the `BEST` approach
   - Due to limitations from TypeScript making it hard to implement the `BEST` approach
   - Dependency types reference to other class(better) instead of interface(best)
+- `providers` - let DI container create the dependency graph
+- `exports` let DI container know to create instance, enable access from other modules
+- `imports` let the current module use everything exported from the imported module
 
 ### Main Benefit
+
 - Testing App is far more easier XD
 - If not a fan of testing, nest may not give u too much benefit

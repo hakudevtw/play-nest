@@ -6,5 +6,6 @@ import { PowerModule } from '../power/power.module';
   // Import to use services exported from PowerModule
   imports: [PowerModule],
   providers: [CpuService],
+  exports: [CpuService],
 })
 export class CpuModule {}
