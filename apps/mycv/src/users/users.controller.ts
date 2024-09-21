@@ -16,6 +16,7 @@ import { UsersService } from './users.service';
 import { UserDto } from './dtos/users.dto';
 
 @Controller('auth')
+@Serialize(UserDto) // controller level
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
@@ -28,10 +29,9 @@ export class UsersController {
   // built-in class-serializer-interceptor to serialize the response
   // serialize - convert the response to a plain object
   // @UseInterceptors(new SerializeInterceptor(UserDto))
-  @Serialize(UserDto)
+  // @Serialize(UserDto) // handler level
   @Get(':id')
   async findUser(@Param('id') id: string) {
-    console.log('Handler is running');
     const user = await this.usersService.findOne(parseInt(id));
     if (!user) {
       throw new NotFoundException('User not found');
