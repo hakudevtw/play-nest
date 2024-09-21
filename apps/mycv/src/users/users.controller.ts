@@ -14,6 +14,7 @@ import { SerializeInterceptor } from '../interceptors/serialize.interceptor';
 import { CreateUserDto } from './dtos/creata-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { UsersService } from './users.service';
+import { UserDto } from './dtos/users.dto';
 
 @Controller('auth')
 export class UsersController {
@@ -27,7 +28,7 @@ export class UsersController {
 
   // built-in class-serializer-interceptor to serialize the response
   // serialize - convert the response to a plain object
-  @UseInterceptors(SerializeInterceptor)
+  @UseInterceptors(new SerializeInterceptor(UserDto))
   @Get(':id')
   async findUser(@Param('id') id: string) {
     console.log('Handler is running');

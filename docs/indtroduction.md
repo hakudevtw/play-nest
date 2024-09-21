@@ -263,8 +263,11 @@
 > removing password from user get response
 
 ### Nest Recommendations
+
 - Implementation
+
   - In entity, add directions on how to turn instance into plain object
+
     ```typescript
     // user.entity.ts
     @Entity() // Check and create table in the database
@@ -276,6 +279,7 @@
       // ...
     }
     ```
+
   - Use interceptors to intercept response and turn user entity instance into object, based on rules provided by the user entity
     ```typescript
     // users.controller.ts
@@ -289,6 +293,7 @@
       return user;
     }
     ```
+
 - Downsides
   - Scenarios
     - Maybe you wan't to create a route for admin that can see all info
@@ -297,16 +302,30 @@
   - The implementation provided by nest by binding into entity is not possible to return different properties based on routes
 
 ### Better approach
+
 - Don't tie any formatting or serialization info into entity
 - Add serialization to User DTO in the custom interceptor for handling response
   - can create separate dto for different route (Ex. private or public route)
 - Interceptors (middleware)
+
   - Can be applied to a single handler level, a controller level, or globally
   - Creating one `[Name]Interceptor` and add an `intercept` method
     ```typescript
     // context: information about the request or response
     // next: rxjs observable (kind of like route handler)
     intercept(context: ExecutionContext, next: CallHandler) {
-      // ...
+      // Run something before a request is handled by the request handler
+      return next.handle().pipe(
+      map((data: any) => {
+        // Run something before the response is sent out
+      }),
+    );
     }
     ```
+    - Currently still getting User instance instead of plain object
+    - Nest default takes the returned value (currently instance) and turn into JSON
+  - Intercept the Nest default process
+    - Take User Entity instance
+    - Convert to DTO instance (having all serialization rules)
+    - Return the instance
+    - Nest takes the instance, turn into JSON then send back
