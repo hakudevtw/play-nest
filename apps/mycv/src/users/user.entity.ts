@@ -6,6 +6,7 @@ import {
   Column,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+// import { Exclude } from 'class-transformer';
 
 // Community convention
 // name the entity class in singular form without type
@@ -18,6 +19,7 @@ export class User {
   email: string;
 
   @Column()
+  // @Exclude() // Exclude password from the response
   password: string;
 
   @AfterInsert()

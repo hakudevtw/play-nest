@@ -257,3 +257,56 @@
 - Usually want to throw exceptions on controllers, but there are still scenarios hard to hook in to service and get what kind of error happened
 - Throwing http specific exceptions in service won't be caught by controllers using other protocols (Ex. NotFoundException)
 - Create custom Exceptional Filters instead of the HTTP exceptional filters provided by nest
+
+## Removing properties u don't want to response to user
+
+> removing password from user get response
+
+### Nest Recommendations
+- Implementation
+  - In entity, add directions on how to turn instance into plain object
+    ```typescript
+    // user.entity.ts
+    @Entity() // Check and create table in the database
+    export class User {
+      @Column()
+      @Exclude() // from class-transformer
+      password: string;
+
+      // ...
+    }
+    ```
+  - Use interceptors to intercept response and turn user entity instance into object, based on rules provided by the user entity
+    ```typescript
+    // users.controller.ts
+    @UseInterceptors(ClassSerializerInterceptor)
+    @Get(':id')
+    async findUser(@Param('id') id: string) {
+      const user = await this.usersService.findOne(parseInt(id));
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+      return user;
+    }
+    ```
+- Downsides
+  - Scenarios
+    - Maybe you wan't to create a route for admin that can see all info
+      Ex. GET /admin/auth/2
+    - May want to separate a route for public and for private
+  - The implementation provided by nest by binding into entity is not possible to return different properties based on routes
+
+### Better approach
+- Don't tie any formatting or serialization info into entity
+- Add serialization to User DTO in the custom interceptor for handling response
+  - can create separate dto for different route (Ex. private or public route)
+- Interceptors (middleware)
+  - Can be applied to a single handler level, a controller level, or globally
+  - Creating one `[Name]Interceptor` and add an `intercept` method
+    ```typescript
+    // context: information about the request or response
+    // next: rxjs observable (kind of like route handler)
+    intercept(context: ExecutionContext, next: CallHandler) {
+      // ...
+    }
+    ```
