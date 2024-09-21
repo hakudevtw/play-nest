@@ -1,0 +1,6 @@
+- Entities
+  - TypeORM creates repositories based on the entities, no need to set up your self
+  - Steps
+    - Create entity file, create class in it and list all the properties entity should have
+    - Connect entity to parent module, this creates a repository
+    - Connect entity to the root connection (in app module)
