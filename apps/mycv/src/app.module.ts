@@ -13,7 +13,8 @@ import { Report } from './reports/report.entity';
       type: 'sqlite', // file-based database
       database: 'db.sqlite', // name of the database file
       entities: [User, Report], // entities to load
-      synchronize: true,
+      synchronize: true, // auto-update the db tables (for development only)
+      // Usually, migrations are written by developers to update the database schema
     }),
     UsersModule,
     ReportsModule,

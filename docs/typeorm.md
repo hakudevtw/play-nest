@@ -4,3 +4,9 @@
     - Create entity file, create class in it and list all the properties entity should have
     - Connect entity to parent module, this creates a repository
     - Connect entity to the root connection (in app module)
+- [Repository API](https://www.typeorm.io/#/repository-api)
+  - create - makes a new instance of an entity, but does not persist it to the DB
+  - save - Adds or updates record to the DB
+  - find - runs a query and returns a list of entities
+  - findOne - runs a query, returns the first record matching the search criteria
+  - remove - remove a record from DB
