@@ -30,6 +30,12 @@ export class UsersController {
     return this.authService.signup(email, password);
   }
 
+  @Post('signin')
+  signin(@Body() body: CreateUserDto) {
+    const { email, password } = body;
+    return this.authService.signin(email, password);
+  }
+
   // built-in class-serializer-interceptor to serialize the response
   // serialize - convert the response to a plain object
   // @UseInterceptors(new SerializeInterceptor(UserDto))
