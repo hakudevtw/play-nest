@@ -18,3 +18,13 @@
     - hash the joined value
     - compare
 - hacker will have to generate different tables by guessing different salts, not possible!
+
+### Session and Cookies
+- use session-cookie library to implement authentication
+- after signing in or signup, the session is saved in the cookie and sent back in response, next time on request
+  - cookie-session looks at the `Cookie` header
+  - cookie-session decodes the string resulting in an object
+  - access the session object in request handler using decorator
+  - add/remove/change the session object
+  - cookie-session sees the updated session and turns it into encrypted string
+  - cookie session only send back cookie in response if the session object is updated
