@@ -38,4 +38,6 @@
   - add interceptor to user providers in users module
   - add @UseInterceptors(CurrentUserInterceptor) to user controller on controller level
   - use @CurrentUser param in routes that needs access to the user instance
-- Usage 2 (global scoped interceptors)
+- Usage 2 (global scoped interceptors) -> fetch user even not needed
+  - add CurrentUserInterceptor as APP_INTERCEPTOR to users module
+  - this will apply to all controllers under user module
