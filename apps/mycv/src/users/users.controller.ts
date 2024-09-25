@@ -16,6 +16,7 @@ import { UpdateUserDto } from './dtos/update-user.dto';
 import { UsersService } from './users.service';
 import { UserDto } from './dtos/users.dto';
 import { AuthService } from './auth.service';
+import { CurrentUser } from './decorators/current-user.decorator';
 
 @Controller('auth')
 @Serialize(UserDto) // controller level
@@ -26,8 +27,7 @@ export class UsersController {
   ) {}
 
   @Get('whoami')
-  async whoAmI(@Session() session: any) {
-    const user = await this.usersService.findOne(session.userId);
+  async whoAmI(@CurrentUser() user: string) {
     return user;
   }
 
