@@ -6,7 +6,6 @@ export const CurrentUser = createParamDecorator(
   // context - the context of the request (any kind of request, not just HTTP)
   (_: never, context: ExecutionContext) => {
     const request = context.switchToHttp().getRequest();
-    const { userId } = request.session || {};
-    return userId;
+    return request.user;
   },
 );
