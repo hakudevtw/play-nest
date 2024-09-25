@@ -28,3 +28,14 @@
   - add/remove/change the session object
   - cookie-session sees the updated session and turns it into encrypted string
   - cookie session only send back cookie in response if the session object is updated
+
+### Combine decorator and interceptor to get current user in route params
+- Implementation
+  - interceptor gets the user id from session and request user instance
+  - interceptor injects the user instance into the request object
+  - decorator param gets user instance from request object (context)
+- Usage 1 (controller scoped interceptors) -> need to add to all controllers separately
+  - add interceptor to user providers in users module
+  - add @UseInterceptors(CurrentUserInterceptor) to user controller on controller level
+  - use @CurrentUser param in routes that needs access to the user instance
+- Usage 2 (global scoped interceptors)

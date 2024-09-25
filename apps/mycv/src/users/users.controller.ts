@@ -8,9 +8,12 @@ import {
   Param,
   Query,
   NotFoundException,
+  UseInterceptors,
   Session, // working with session
 } from '@nestjs/common';
 import { Serialize } from '../interceptors/serialize.interceptor';
+import { CurrentUserInterceptor } from './interceptors/current-user.interceptor';
+import { User } from './user.entity';
 import { CreateUserDto } from './dtos/creata-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { UsersService } from './users.service';
@@ -20,6 +23,7 @@ import { CurrentUser } from './decorators/current-user.decorator';
 
 @Controller('auth')
 @Serialize(UserDto) // controller level
+@UseInterceptors(CurrentUserInterceptor)
 export class UsersController {
   constructor(
     private usersService: UsersService,
@@ -27,7 +31,7 @@ export class UsersController {
   ) {}
 
   @Get('whoami')
-  async whoAmI(@CurrentUser() user: string) {
+  async whoAmI(@CurrentUser() user: User) {
     return user;
   }
 
