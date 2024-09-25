@@ -22,7 +22,8 @@ export class UsersService {
     // return this.repo.save({ email, password });
   }
 
-  findOne(id: number) {
+  async findOne(id: number) {
+    if (!id) return null;
     // Decide return null or throw an error if not found
     return this.repo.findOneBy({ id });
   }

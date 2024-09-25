@@ -25,6 +25,12 @@ export class UsersController {
     private authService: AuthService,
   ) {}
 
+  @Get('whoami')
+  async whoAmI(@Session() session: any) {
+    const user = await this.usersService.findOne(session.userId);
+    return user;
+  }
+
   @Post('signup')
   async createUser(@Body() body: CreateUserDto, @Session() session: any) {
     const { email, password } = body;
@@ -39,6 +45,11 @@ export class UsersController {
     const user = await this.authService.signin(email, password);
     session.userId = user.id;
     return user;
+  }
+
+  @Post('signout')
+  signout(@Session() session: any) {
+    session.userId = null;
   }
 
   // built-in class-serializer-interceptor to serialize the response
