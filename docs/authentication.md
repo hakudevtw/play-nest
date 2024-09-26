@@ -41,3 +41,7 @@
 - Usage 2 (global scoped interceptors) -> fetch user even not needed
   - add CurrentUserInterceptor as APP_INTERCEPTOR to users module
   - this will apply to all controllers under user module
+
+### Auth Guard
+- called automatically every time incoming request, either return truthy value or falsy value, deciding to pass through or reject
+- can be added globally, on controller level or on handler level
