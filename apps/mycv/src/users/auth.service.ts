@@ -17,7 +17,6 @@ export class AuthService {
     // See if email is in use
     const users = await this.usersService.find(email);
     if (users.length) {
-      console.log('throwing error');
       throw new BadRequestException('Email in use');
     }
 

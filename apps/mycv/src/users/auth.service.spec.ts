@@ -1,8 +1,11 @@
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { UsersService } from './users.service';
 import { User } from './user.entity';
+
+const USER_EMAIL = 'test@test.com';
+const USER_PASSWORD = 'test';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -10,14 +13,27 @@ describe('AuthService', () => {
 
   // Runs before each test
   beforeEach(async () => {
+    const users: User[] = [];
+
     // Create a fake copy of the UsersService
     // By changing the implementation of the fakeUsersService
     // we can test different scenarios
     fakeUsersService = {
       // Only mocking the methods needed by AuthService
-      find: () => Promise.resolve([]),
-      create: (email: string, password: string) =>
-        Promise.resolve({ id: 1, email, password } as User),
+      find: (email: string) => {
+        const filteredUsers = users.filter((user) => user.email === email);
+        return Promise.resolve(filteredUsers);
+      },
+      create: (email: string, password: string) => {
+        const user = {
+          id: Math.floor(Math.random() * 9999),
+          email,
+          password,
+        } as User;
+
+        users.push(user);
+        return Promise.resolve(user);
+      },
     };
 
     // Creating a mock di container
@@ -48,27 +64,37 @@ describe('AuthService', () => {
   });
 
   it('creates a new user with a salted and hashed password', async () => {
-    const EMAIL = 'test@test.com';
-    const PASSWORD = 'test';
-    const user = await service.signup(EMAIL, PASSWORD);
+    const user = await service.signup(USER_EMAIL, USER_PASSWORD);
     const [salt, hash] = user.password.split('.');
 
-    expect(user.password).not.toEqual(PASSWORD);
+    expect(user.password).not.toEqual(USER_PASSWORD);
     expect(salt).toBeDefined();
     expect(hash).toBeDefined();
   });
 
   it('throws and error if user signs up with email that is in use', async () => {
-    fakeUsersService.find = () =>
-      Promise.resolve([
-        {
-          id: 1,
-          email: 'test@test.com',
-          password: 'test',
-        } as User,
-      ]);
-    await expect(service.signup('test@test.com', 'test')).rejects.toThrow(
+    await service.signup(USER_EMAIL, USER_PASSWORD);
+    await expect(service.signup(USER_EMAIL, USER_PASSWORD)).rejects.toThrow(
       BadRequestException,
     );
+  });
+
+  it('throws and error if signin is called with an unused email', async () => {
+    await expect(service.signin(USER_EMAIL, USER_PASSWORD)).rejects.toThrow(
+      NotFoundException,
+    );
+  });
+
+  it('throws and error if an invalid password is provided', async () => {
+    await service.signup(USER_EMAIL, USER_PASSWORD);
+    await expect(service.signin(USER_EMAIL, 'wrong_password')).rejects.toThrow(
+      BadRequestException,
+    );
+  });
+
+  it('returns a user if correct password is provided', async () => {
+    await service.signup(USER_EMAIL, USER_PASSWORD);
+    const user = await service.signin(USER_EMAIL, USER_PASSWORD);
+    expect(user).toBeDefined();
   });
 });
