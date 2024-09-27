@@ -21,7 +21,7 @@ import { UsersService } from './users.service';
 import { UserDto } from './dtos/users.dto';
 import { AuthService } from './auth.service';
 import { CurrentUser } from './decorators/current-user.decorator';
-import { AuthGuard } from 'src/guards/auth.guard';
+import { AuthGuard } from '../guards/auth.guard';
 
 @Controller('auth')
 @Serialize(UserDto) // controller level
@@ -32,6 +32,7 @@ export class UsersController {
     private authService: AuthService,
   ) {}
 
+  // Decorators are not testable
   @Get('whoami')
   @UseGuards(AuthGuard)
   async whoAmI(@CurrentUser() user: User) {
