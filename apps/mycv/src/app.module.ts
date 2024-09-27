@@ -1,4 +1,6 @@
-import { Module } from '@nestjs/common';
+import { Module, ValidationPipe, MiddlewareConsumer } from '@nestjs/common';
+import cookieSession from 'cookie-session';
+import { APP_PIPE } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -20,6 +22,29 @@ import { Report } from './reports/report.entity';
     ReportsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      // Runs this pipe for every incoming request
+      provide: APP_PIPE,
+      useValue: new ValidationPipe({
+        whitelist: true,
+      }),
+    },
+  ],
 })
-export class AppModule {}
+export class AppModule {
+  // Will be called by Nest when the app is ready
+  configure(consumer: MiddlewareConsumer) {
+    // Setup middleware for the app
+    // Apply the middleware to all routes
+    consumer
+      .apply(
+        cookieSession({
+          keys: ['asdklkjljs'],
+        }),
+      )
+
+      .forRoutes('*');
+  }
+}
