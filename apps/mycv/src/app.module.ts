@@ -15,6 +15,7 @@ import { Report } from './reports/report.entity';
 
 @Module({
   imports: [
+    // Create ConfigService to access the environment variables
     // Using the .env file to load the environment variables
     ConfigModule.forRoot({
       isGlobal: true, // Makes available globally
@@ -55,6 +56,8 @@ import { Report } from './reports/report.entity';
   ],
 })
 export class AppModule {
+  constructor(private configService: ConfigService) {}
+
   // Will be called by Nest when the app is ready
   configure(consumer: MiddlewareConsumer) {
     // Setup middleware for the app
@@ -62,10 +65,9 @@ export class AppModule {
     consumer
       .apply(
         cookieSession({
-          keys: ['asdklkjljs'],
+          keys: [this.configService.get('COOKIE_KEY')],
         }),
       )
-
       .forRoutes('*');
   }
 }
