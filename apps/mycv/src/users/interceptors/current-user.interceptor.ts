@@ -7,6 +7,8 @@ import {
 import { UsersService } from '../users.service';
 import type { Observable } from 'rxjs';
 
+// Moved to middlewares that run before the guard
+
 @Injectable()
 export class CurrentUserInterceptor implements NestInterceptor {
   constructor(private usersService: UsersService) {}

@@ -329,3 +329,13 @@
     - Convert to DTO instance (having all serialization rules)
     - Return the instance
     - Nest takes the instance, turn into JSON then send back
+
+### Processing Requests
+
+1. Request
+2. Middlewares
+3. Guards
+4. (Interceptor)
+5. Request Handler
+6. (Interceptor)
+7. Response
