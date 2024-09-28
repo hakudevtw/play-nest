@@ -5,5 +5,8 @@
   "testRegex": ".e2e-spec.ts$",
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
-  }
+  },
+  // Will be executed before each test
+  // <rootDir> is the location of the jest-e2e.json file
+  "setupFilesAfterEnv": ["<rootDir>/setup.ts"]
 }
