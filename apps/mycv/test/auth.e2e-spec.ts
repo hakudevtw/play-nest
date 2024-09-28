@@ -6,6 +6,11 @@ import { AppModule } from './../src/app.module';
 const USER_EMAIL = 'test@test.com';
 const USER_PASSWORD = 'test';
 
+// Each test has its own instance of the app
+// but sharing the same database
+// probably want separate databases for development and testing
+// wipe the test database and recreate one before each test
+
 // When running e2e tests, the environment is missing the part in main.ts that sets up the global prefix.
 // Ex. sessions, pipes, guards, etc. are not set up.
 describe('Authentication System (e2e)', () => {
